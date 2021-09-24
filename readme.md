@@ -1,3 +1,4 @@
 ```bat
-pyinstaller main.py -F -c -n "fr.omsistuff.autodl.exe"
+python setup.py build
+pyinstaller installer.py -F -c -n "fr.omsistuff.autodl.exe"
 ```

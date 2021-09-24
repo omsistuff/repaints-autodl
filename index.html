@@ -8,16 +8,54 @@
 </head>
 <body>
 
-    <a href="osfrinstall:\\rep_id=350&callback_url=">Ouvrir omsistuff autodl</a>
+    <a href="autodlomsistuff:\\" id="start">Installer</a>
+
+    <progress id="progress" min="0" max="0" value="0"></progress>
+    <p id="autodl-message"></p>
 
     <script>
-        // Créer une connexion WebSocket
-        const socket = new WebSocket('ws://localhost:5300');
+        function handleWebsocket() {
+            const autodlMessage = document.getElementById('autodl-message');
+            const messages = {
+                'tld:request_download_link': "Envoie du lien du fichier",
+                'tld:download:started': "Début du téléchargement",
+                'tld:archive:start': "Décompression de l'archive",
+                'tld:archive:done': "Le repaint a bien été installé"
+            }
 
-        // Écouter les messages
-        socket.addEventListener('message', function (event) {
-            console.log(event.data);
-        });
+            // Créer une connexion WebSocket
+            const socket = new WebSocket('ws://localhost:5300');
+
+            socket.addEventListener('error', e => {
+                console.log('error', e);
+                handleWebsocket();
+            })
+
+            // Écouter les messages
+            socket.addEventListener('message', function (event) {
+                console.log(event.data);
+                // messages
+                if (messages.hasOwnProperty(event.data)) {
+                    autodlMessage.innerText = messages[event.data];
+                }
+                // send download link
+                if(event.data.includes('tld:request_download_link')) {
+                    socket.send('https://storage.googleapis.com/omsistuff-cdn/programs/autodl/repaints/nhvf.zip');
+                }
+                // download progress
+                if(event.data.includes('tld:download:progress')) {
+                    percentage = event.data.split('=')[1];
+                    document.getElementById('progress').value = percentage;
+                }
+                // send close app instruction
+                if(event.data.includes('tld:request_close_app')) {
+                    socket.send('tld:close_app');
+                }
+            });
+        };
+
+        startBtn = document.getElementById('start');
+        startBtn.addEventListener('click', handleWebsocket);
     </script>
     
 </body>
