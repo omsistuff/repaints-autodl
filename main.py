@@ -7,6 +7,7 @@ import asyncio
 import time
 import sys
 import zipfile
+from win10toast import ToastNotifier
 
 steam_folder = r"C:\Program Files (x86)\Steam\steamapps\common"
 
@@ -61,7 +62,15 @@ async def time(websocket, path):
                     except:
                         await websocket.send('tld:archive:error_file')
             # remove tmp archive
-            os.remove(file_name)
+            try:
+                os.remove(file_name)
+            except:
+                webbrowser.open('https://omsistuff.fr/autodl?e=archive_error')
+                sys.exit(0)
+
+            # repaint successfully installed
+            # toaster = ToastNotifier()
+            # toaster.show_toast("OmsiStuff", "Le repaint a correctement été installé")
             await websocket.send('tld:archive:done')
             logEvent(action="download")
             
