@@ -32,6 +32,7 @@ async def time(websocket, path):
         await websocket.send('tld:download:started')
         response = requests.get(download_link)
         file_name = os.path.join(steam_folder, 'fr.omsistuff.tdl.tmp.zip')
+        program_path = os.path.join(steam_folder, 'OMSI 2', '.omsistuff', 'autodl')
 
         if download_link.startswith("https://storage.googleapis.com/omsistuff-cdn/"):
             with open(file_name, "wb") as f:
@@ -79,6 +80,36 @@ async def time(websocket, path):
             await websocket.recv()
         else:
             webbrowser.open('https://omsistuff.fr/autodl?e=invalid_link')
+
+        # download selfupdate exe (installer)
+        # retrieve last release of git repo
+        response = requests.get("https://api.github.com/repos/aryqs-ipsum/omsistuff-autodl/releases/latest")
+        browser_download_url = response.json()["assets"][0]["browser_download_url"]
+        tag_name = response.json()["tag_name"]
+
+        # read lasest version file
+        version_txt = os.path.join(program_path, 'version.txt')
+        if not os.path.exists(version_txt):
+            f = open(version_txt, 'w')
+            f.close()
+
+        tag_file = open(version_txt, "r+")
+        tag_from_file = tag_file.readline()
+
+        # detect if actual version is already installed
+        if tag_name != tag_from_file:
+            file = requests.get(browser_download_url, stream=True)
+            self_update_exe_name = os.path.join(program_path, 'self.update.fr.omsistuff.autodl.exe')
+            with open(self_update_exe_name, "wb") as f:
+                f.write(file.content)
+
+            # write new tag to file
+            tag_file.seek(0)
+            tag_file.write(tag_name)
+            tag_file.truncate()
+
+        # launch selfupdate exe
+        os.startfile(self_update_exe_name)
 
         # force close the script
         # TODO: break loop and execute and end script function

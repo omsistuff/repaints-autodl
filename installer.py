@@ -12,8 +12,10 @@ if __name__ == "__main__":
     autodl_path = os.path.join(program_path, "autodl")
     md5file = os.path.join(program_path, "autodl.md5")
     tmp_loc = os.path.join(program_path, "autodl.tmp.zip")
-    build_url = "https://firebasestorage.googleapis.com/v0/b/objects-omsistuff.appspot.com/o/programs%2Fautodl%2Fbuild.zip"
+    bucket_url = "https://firebasestorage.googleapis.com/v0/b/objects-omsistuff.appspot.com/o/programs%2Fautodl%2F"
+    build_url = bucket_url + "build.zip"
     download_link = build_url + "?alt=media"
+    reg_path = os.path.join(autodl_path, 'url_protocol.reg')
     metadata = requests.get(build_url).json()
 
     def resourcePath(relative_path):
@@ -63,7 +65,7 @@ if __name__ == "__main__":
         reg_attemps+=1
         if reg_attemps < 3:
             try:
-                os.startfile(os.path.join(autodl_path, 'url_protocol.reg'))
+                os.startfile(reg_path)
             except:
                 message = "Veuillez accepter les droits a cette étape.\nCeci permet au logiciel de s'ouvrir depuis le navigateur.\n(nouvel essai dans 5s)"
                 currentTask.set(message)
@@ -119,6 +121,9 @@ if __name__ == "__main__":
 
             # open registry file
             if read_reg() is None:
+                reg_file = requests.get(bucket_url + "url_protocol.reg?alt=media")
+                with open(reg_path, 'wb') as f:
+                    f.write(reg_file.content)
                 open_reg_file()
 
             # write new hash to file
