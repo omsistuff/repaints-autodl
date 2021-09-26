@@ -1,3 +1,3 @@
 ```bat
-python setup.py bdist_msi
+python setup.py build
 ```

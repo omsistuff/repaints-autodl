@@ -1,6 +1,10 @@
 from cx_Freeze import setup, Executable
 
-executables = [Executable("main.py", base = "Win32GUI")]
+exe = [Executable(
+    script = "main.py",
+    base = "Win32GUI",
+    icon = "icon.ico"
+)]
 
 options = {
     'build_exe': {    
@@ -14,5 +18,5 @@ setup(
     options = options,
     version = "1.0",
     description = 'Installe automatiquement des repaints pour OMSI 2 depuis la page web omsistuff.fr',
-    executables = executables
+    executables = exe
 )
