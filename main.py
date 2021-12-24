@@ -83,7 +83,7 @@ async def time(websocket, path):
 
         # download selfupdate exe (installer)
         # retrieve last release of git repo
-        response = requests.get("https://api.github.com/repos/aryqs-ipsum/omsistuff-autodl/releases/latest")
+        response = requests.get("https://api.github.com/repos/omsistuff/repaints-autodl/releases/latest")
         browser_download_url = response.json()["assets"][0]["browser_download_url"]
         tag_name = response.json()["tag_name"]
 
