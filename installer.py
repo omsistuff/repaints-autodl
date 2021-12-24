@@ -74,6 +74,11 @@ if __name__ == "__main__":
                 open_reg_file()
 
     def main():
+
+        # create .omsistuff dir if not exists
+        if not os.path.exists(program_path):
+            os.makedirs(program_path)
+
         # read lasest hash file
         if not os.path.exists(md5file):
             f = open(md5file, 'w')
