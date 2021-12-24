@@ -7,7 +7,7 @@ import asyncio
 import time
 import sys
 import zipfile
-from win10toast import ToastNotifier
+# from win10toast import ToastNotifier
 
 steam_folder = r"C:\Program Files (x86)\Steam\steamapps\common"
 
